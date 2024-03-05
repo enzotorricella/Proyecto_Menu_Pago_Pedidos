@@ -20,11 +20,20 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <img src="IMG/delivery-man.png" alt="" srcset="">
       <a class="navbar-brand" href="Comanda.html">Pedido Burger</a>
+
+    </div>
+    
     </nav>
 
   </header>
 
   <main>
+    <div id="carrito" class="container mt-4">
+      <h2>Carrito de Compras</h2>
+      <ul id="lista-carrito" class="list-group"></ul>
+      <p id="total" class="mt-3">Pedido: 0</p>
+      <button id="confirmar-pedido"  class="btn btn-secondary">Confirmar Pedido</button>
+      </div>
 
 
     <div class="container mt-5">
@@ -33,8 +42,13 @@
           <div class="card">
             <img src="IMG/Productos/empanada_carne.jpg" class="card-img-top" alt="Imagen 1">
             <div class="card-body">
-              <h5 class="card-title">Menú 1</h5>
-              <p class="card-text">Descripción del menú 1.</p>
+              <h5 class="card-title">Combo King-Pollo</h5>
+              <p class="card-text">
+                <li>Hamburguesa de pollo 
+                  <li>Papas regulares</li></li>
+                <li>gaseosa Mediana</li>
+              <li><STROng>$1500</STROng></li></p>
+              
               <div class="form-group input-small">
                 <label for="menu1Cantidad">Cantidad:</label>
                 <div class="input-group">
@@ -54,9 +68,9 @@
           <div class="card">
             <img src="IMG/Productos/empanada_atun.jpg" class="card-img-top" alt="Imagen 2">
             <div class="card-body">
-              <h5 class="card-title">Menú 2</h5>
-              <p class="card-text">Descripción del menú 2.</p>
-              <div class="form-group input-small">
+              <h5 class="card-title">Papas King</h5>
+              <p class="card-text">Balde de 500gr de Papas</p>
+              <div class="form-group input-small"><br><br><br>
                 <label for="menu1Cantidad">Cantidad:</label>
                 <div class="input-group">
                   <input type="number" class="form-control" id="menu2Cantidad">
@@ -74,9 +88,11 @@
           <div class="card">
             <img src="IMG/Productos/empanada_jamonyqueso.jpg" class="card-img-top" alt="Imagen 3">
             <div class="card-body">
-              <h5 class="card-title">Menú 3</h5>
-              <p class="card-text">Descripción del menú 3.</p>
-              <div class="form-group input-small">
+              <h5 class="card-title">Combo Mexican</h5>
+              <p class="card-text"><li>3 tacos al pasto</li>
+              <li>Papas regulares</li>
+            <li>Gaseosa o refresco natural</li></p>
+              <div class="form-group input-small"><br>
                 <label for="menu1Cantidad">Cantidad:</label>
                 <div class="input-group">
                   <input type="number" class="form-control" id="menu3Cantidad">
@@ -354,7 +370,56 @@
         </div>
       </div>
     </div>
+    <script>
+      const listaCarrito = document.getElementById('lista-carrito');
+      const totalCarrito = document.getElementById('total');
+      const botonesAgregar = document.querySelectorAll('.btn-cart');
+      let carrito = [];
+  
+      botonesAgregar.forEach(btn => {
+          btn.addEventListener('click', agregarAlCarrito);
+      });
+  
+      function agregarAlCarrito(event) {
+          const card = event.target.closest('.card');
+          const titulo = card.querySelector('.card-title').textContent;
+          const cantidad = card.querySelector('.form-control').value;
+          const producto = {
+              titulo,
+              cantidad
+          };
+  
+          carrito.push(producto);
+          actualizarCarrito();
+      }
+  
+      function actualizarCarrito() {
+          listaCarrito.innerHTML = '';
+          let total = 0;
+  
+          carrito.forEach(producto => {
+              const li = document.createElement('li');
+              li.classList.add('list-group-item');
+              li.textContent = `${producto.titulo} - Cantidad: ${producto.cantidad}`;
+              listaCarrito.appendChild(li);
+  
+              total += parseInt(producto.cantidad);
+          });
+  
+          totalCarrito.textContent = `Total: $${total}`;
+      }
+      const confirmarPedidoButton = document.getElementById('confirmar-pedido');
 
+confirmarPedidoButton.addEventListener('click', function () {
+    if (carrito.length > 0) {
+        localStorage.setItem('carrito', JSON.stringify(carrito));
+        window.location.href = 'Comanda.html';
+    } else {
+        alert('El carrito está vacío. Agrega productos antes de confirmar el pedido.');
+    }
+});
+  </script>
+  
   </main>
 
   <footer class="footer mt-auto py-3 bg-dark">

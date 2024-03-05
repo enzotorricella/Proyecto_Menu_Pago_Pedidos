@@ -31,38 +31,25 @@
                     </div>
                     <div class="row">
                         <div class="col-sm-4">
-                            <h3 class="text-center">Pedidos</h3>
-                            <div class="card mb-3">
-                                <div class="card-body">
-                                    <h5 class="card-title">Pedido 1</h5>
-                                    <p class="card-text">Detalles del pedido...</p>
-                                    <button class="btn btn-primary btn-block next-btn">Next</button>
-                                </div>
-                            </div>
-                            <div class="card mb-3">
-                                <div class="card-body">
-                                    <h5 class="card-title">Pedido 1</h5>
-                                    <p class="card-text">Detalles del pedido...</p>
-                                    <button class="btn btn-primary btn-block next-btn">Next</button>
-                                </div>
-                            </div>
-                            <!-- Aquí puedes agregar más tarjetas de pedidos -->
+                            <h3 class="text-center">Pendientes</h3>
+                            <ul id="pedidos-pendientes" class="list-group">
+                                <!-- Aquí se agregarán las tarjetas de pedidos pendientes -->
+                            </ul>
                         </div>
+                        
                         <div class="col-sm-4">
                             <h3 class="text-center">En Proceso</h3>
-                            <div class="card mb-3">
-                                <div class="card-body">
-                                    <h5 class="card-title">Pedido 1</h5>
-                                    <p class="card-text">Detalles del pedido...</p>
-                                    <button class="btn btn-primary btn-block next-btn">Next</button>
-                                </div>
-                            </div>
-                            <!-- Aquí puedes agregar tarjetas de pedidos en proceso -->
+                            <ul id="pedidos-en-proceso" class="list-group">
+                                <!-- Aquí se agregarán las tarjetas de pedidos en proceso -->
+                            </ul>
                         </div>
                         <div class="col-sm-4">
                             <h3 class="text-center">Finalizados</h3>
-                            <!-- Aquí puedes agregar tarjetas de pedidos finalizados -->
+                            <ul id="pedidos-finalizados" class="list-group">
+                                <!-- Aquí se agregarán las tarjetas de pedidos finalizados -->
+                            </ul>
                         </div>
+                        
                     </div>
                 </div>
 
@@ -79,34 +66,65 @@
             </span>
         </div>
     </footer>
-
     <script>
-        // Reloj y Event Delegation para los botones "Next"
         document.addEventListener("DOMContentLoaded", function () {
             function updateClock() {
                 const now = new Date();
                 const timeString = now.toLocaleTimeString();
                 document.getElementById('clock').textContent = timeString;
             }
-
+    
             setInterval(updateClock, 1000);
-
+    
             const kanbanBoard = document.querySelector('.kanban-board');
-
+    
             kanbanBoard.addEventListener("click", function (event) {
                 const target = event.target;
                 if (target.classList.contains("next-btn")) {
-                    const card = target.closest(".card");
-                    const currentColumn = card.parentNode;
+                    const card = target.closest(".list-group-item");
+                    const currentColumn = card.closest(".col-sm-4");
                     const nextColumn = currentColumn.nextElementSibling;
-
+    
                     if (nextColumn) {
-                        nextColumn.appendChild(card);
+                        const targetList = nextColumn.querySelector('.list-group');
+                        targetList.appendChild(card);
+    
+                        if (nextColumn.classList.contains("col-sm-4") && nextColumn.nextElementSibling === null) {
+                            target.querySelector('.next-btn').classList.remove("btn-primary");
+                            target.querySelector('.next-btn').classList.add("btn-danger");
+                            target.querySelector('.next-btn').textContent = "Borrar";
+                        }
+                    } else if (currentColumn.classList.contains("col-sm-4") && currentColumn.nextElementSibling === null) {
+                        const parentList = currentColumn.querySelector('.list-group');
+                        parentList.removeChild(card);
                     }
                 }
             });
+    
+            // Obtener los datos del carrito del Local Storage
+            const carritoData = localStorage.getItem('carrito');
+            const carrito = JSON.parse(carritoData);
+    
+            if (carrito) {
+                const pedidosPendientesList = document.getElementById('pedidos-pendientes');
+    
+                carrito.forEach((producto, index) => {
+                    const pedidoCard = document.createElement('li');
+                    pedidoCard.classList.add('list-group-item');
+                    pedidoCard.innerHTML = `
+                        <h5 class="card-title">Pedido ${index + 1}</h5>
+                        <p class="card-text">${producto.titulo} - Cantidad: ${producto.cantidad}</p>
+                        <button class="btn btn-primary btn-block next-btn">Next</button>
+                    `;
+    
+                    pedidosPendientesList.appendChild(pedidoCard);
+                });
+            }
         });
     </script>
+    
+    
+    
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
