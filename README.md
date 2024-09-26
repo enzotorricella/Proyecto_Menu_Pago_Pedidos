@@ -26,6 +26,7 @@ Este proyecto es una aplicación web que simula el proceso de realizar pedidos e
    - **Listo para Entregar:** Pedido preparado, listo para ser entregado al cliente.
    
    Los pedidos se mueven entre las columnas en función de la interacción desde la cocina.
+![menu digital](https://github.com/user-attachments/assets/c80a7c9f-b4b5-46f4-96ca-ae89df31d02c)
 
 5. **Pantalla de Cocina:** El personal de cocina accede a esta pantalla para visualizar los pedidos en progreso y actualizar el estado de cada uno. Los cambios se reflejan en la vista de pedidos del cliente y el reloj se detiene al completar un pedido.
 
