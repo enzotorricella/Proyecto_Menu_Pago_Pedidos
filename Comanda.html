@@ -2,133 +2,161 @@
 <html lang="es">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Comanda de pedidos - ET Dev</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="icon" type="image/x-icon" href="C:\wamp64\www\Proyecto_Pedido_Comandera\IMG\delivery-man (1).ico" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Comanda de pedidos - ET Dev</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+  <style>
+    body{ background:#f4f6f8; color:#222; }
+    .kanban-column{ min-height:320px; background:#fff; border-radius:8px; border:1px solid #e4e7ea; padding:12px; }
+    .order-card{ margin-bottom:10px; border-left:4px solid #007bff; }
+    .order-meta{ font-size:.9rem; color:#555; }
+    .small-muted{ font-size:.85rem; color:#666; }
+  </style>
 </head>
 
 <body>
-    <header>
+  <header><nav class="navbar navbar-dark bg-dark"><a class="navbar-brand" href="index.html"><img src="IMG/delivery-man.png" width="32" height="32" alt="ET" class="mr-2">Comanda - Cocina</a><div class="ml-auto small-muted pr-2">Sin persistencia — datos en memoria</div></nav></header>
 
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <img src="IMG/delivery-man.png" alt="" srcset="">
-            <a class="navbar-brand" href="index.html">Menu Burger</a>
-        </nav>
+  <main class="container py-3">
+    <div id="controls" class="d-flex align-items-center mb-3">
+      <button id="btn-simular" class="btn btn-outline-primary btn-sm mr-2">Simular pedido</button>
+      <button id="btn-clear" class="btn btn-outline-secondary btn-sm mr-2">Limpiar pedidos</button>
+      <div class="ml-auto small-muted">Recibe pedidos vía postMessage o BroadcastChannel</div>
+    </div>
 
-    </header>
+    <div class="row">
+      <div class="col-md-6">
+        <h5 class="text-center">Pendientes</h5>
+        <div id="pedidos-pendientes" class="kanban-column" aria-live="polite"></div>
+      </div>
+      <div class="col-md-6">
+        <h5 class="text-center">En Proceso / Para Retirar</h5>
+        <div id="pedidos-en-proceso" class="kanban-column" aria-live="polite"></div>
+      </div>
+    </div>
+  </main>
 
-    <main class="container py-4">
-        <div class="row">
-            <div class="col-12">
-                <div class="kanban-board">
-                    <div class="kanban-board text-center">
-                        <h2 id="clock">00:00:00</h2>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-4">
-                            <h3 class="text-center">Pendientes</h3>
-                            <ul id="pedidos-pendientes" class="list-group">
-                                <!-- Aquí se agregarán las tarjetas de pedidos pendientes -->
-                            </ul>
-                        </div>
-                        
-                        <div class="col-sm-4">
-                            <h3 class="text-center">En Proceso</h3>
-                            <ul id="pedidos-en-proceso" class="list-group">
-                                <!-- Aquí se agregarán las tarjetas de pedidos en proceso -->
-                            </ul>
-                        </div>
-                        <div class="col-sm-4">
-                            <h3 class="text-center">Finalizados</h3>
-                            <ul id="pedidos-finalizados" class="list-group">
-                                <!-- Aquí se agregarán las tarjetas de pedidos finalizados -->
-                            </ul>
-                        </div>
-                        
-                    </div>
-                </div>
+  <footer class="footer mt-3 py-3 bg-white"><div class="container text-center small-muted">&copy; ET — <span id="clock">00:00:00</span></div></footer>
 
+  <script>
+    (function(){
+      const pendingEl = document.getElementById('pedidos-pendientes');
+      const processingEl = document.getElementById('pedidos-en-proceso');
+      const btnSimular = document.getElementById('btn-simular');
+      const btnClear = document.getElementById('btn-clear');
+      const clockEl = document.getElementById('clock');
+
+      let orders = []; // { id, createdAt, customerName, type, items, status }
+
+      const chan = ('BroadcastChannel' in window) ? new BroadcastChannel('orders') : null;
+      function broadcast(event){ if(!chan) return; try{ chan.postMessage(event); }catch(e){} }
+
+      function generateId(){ return 'O-'+Date.now().toString(36).toUpperCase().slice(-6); }
+
+      function createOrderCard(order){
+        const card = document.createElement('div');
+        card.className = 'order-card p-2 shadow-sm bg-white';
+        card.dataset.id = order.id;
+        const itemsHtml = order.items.map(it => `<div>${it.title} × ${it.qty}</div>`).join('');
+        card.innerHTML = `
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <strong>${order.customerName}</strong> <div class="order-meta"><small class="text-muted">${order.type || ''}</small></div>
+              <div class="order-meta mt-2">${itemsHtml}</div>
             </div>
-        </div>
+            <div class="text-right">
+              <div class="small text-muted" data-timer-id="${order.id}">00:00</div>
+              <div class="mt-2 btn-group btn-group-sm" role="group" aria-label="acciones">
+                <button class="btn btn-outline-primary btn-prev" title="Anterior">◀</button>
+                <button class="btn btn-primary btn-next" title="Siguiente">▶</button>
+                <button class="btn btn-outline-danger btn-delete" title="Eliminar">✕</button>
+              </div>
+            </div>
+          </div>
+        `;
+        return card;
+      }
 
-    </main>
-
-    <footer class="footer mt-auto py-3 bg-dark">
-        <div class="container text-center">
-            <span class="text-muted">
-                &copy; <a href="https://enzotorricella.github.io/" target="_blank">ET</a> -
-                <script>document.write(new Date().getFullYear())</script>
-            </span>
-        </div>
-    </footer>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            function updateClock() {
-                const now = new Date();
-                const timeString = now.toLocaleTimeString();
-                document.getElementById('clock').textContent = timeString;
-            }
-    
-            setInterval(updateClock, 1000);
-    
-            const kanbanBoard = document.querySelector('.kanban-board');
-    
-            kanbanBoard.addEventListener("click", function (event) {
-                const target = event.target;
-                if (target.classList.contains("next-btn")) {
-                    const card = target.closest(".list-group-item");
-                    const currentColumn = card.closest(".col-sm-4");
-                    const nextColumn = currentColumn.nextElementSibling;
-    
-                    if (nextColumn) {
-                        const targetList = nextColumn.querySelector('.list-group');
-                        targetList.appendChild(card);
-    
-                        if (nextColumn.classList.contains("col-sm-4") && nextColumn.nextElementSibling === null) {
-                            target.querySelector('.next-btn').classList.remove("btn-primary");
-                            target.querySelector('.next-btn').classList.add("btn-danger");
-                            target.querySelector('.next-btn').textContent = "Borrar";
-                        }
-                    } else if (currentColumn.classList.contains("col-sm-4") && currentColumn.nextElementSibling === null) {
-                        const parentList = currentColumn.querySelector('.list-group');
-                        parentList.removeChild(card);
-                    }
-                }
-            });
-    
-            // Obtener los datos del carrito del Local Storage
-            const carritoData = localStorage.getItem('carrito');
-            const carrito = JSON.parse(carritoData);
-    
-            if (carrito) {
-                const pedidosPendientesList = document.getElementById('pedidos-pendientes');
-    
-                carrito.forEach((producto, index) => {
-                    const pedidoCard = document.createElement('li');
-                    pedidoCard.classList.add('list-group-item');
-                    pedidoCard.innerHTML = `
-                        <h5 class="card-title">Pedido ${index + 1}</h5>
-                        <p class="card-text">${producto.titulo} - Cantidad: ${producto.cantidad}</p>
-                        <button class="btn btn-primary btn-block next-btn">Next</button>
-                    `;
-    
-                    pedidosPendientesList.appendChild(pedidoCard);
-                });
-            }
+      function render(){
+        pendingEl.innerHTML = ''; processingEl.innerHTML = '';
+        orders.forEach(order=>{
+          const card = createOrderCard(order);
+          if(order.status === 'Pendiente') pendingEl.appendChild(card);
+          else processingEl.appendChild(card);
         });
-    </script>
-    
-    
-    
+      }
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+      function addOrder(payload){
+        const order = {
+          id: payload.id || generateId(),
+          createdAt: payload.createdAt || new Date().toISOString(),
+          customerName: payload.customerName || payload.meta?.name || 'Sin nombre',
+          type: payload.type || payload.meta?.type || '',
+          items: payload.items || [],
+          status: payload.status || 'Pendiente'
+        };
+        orders.push(order);
+        render();
+        broadcast({ action:'add', order });
+      }
+
+      function changeStatus(id, nextStatus){
+        const o = orders.find(x=>x.id===id); if(!o) return;
+        o.status = nextStatus;
+        render();
+        broadcast({ action:'update', order:o });
+      }
+
+      function deleteOrder(id){
+        orders = orders.filter(x=>x.id!==id);
+        render();
+        broadcast({ action:'delete', id });
+      }
+
+      function fmtTime(diffMs){
+        const s = Math.floor(diffMs/1000); const mm = String(Math.floor(s/60)%60).padStart(2,'0'); const ss = String(s%60).padStart(2,'0'); return `${mm}:${ss}`;
+      }
+
+      function updateTimers(){
+        const now = Date.now();
+        orders.forEach(o=>{
+          const el = document.querySelector(`[data-timer-id="${o.id}"]`);
+          if(el) el.textContent = fmtTime(now - new Date(o.createdAt).getTime());
+        });
+      }
+
+      setInterval(()=>{ updateTimers(); clockEl.textContent = new Date().toLocaleTimeString(); }, 1000);
+
+      document.addEventListener('click', (e)=>{
+        const nextBtn = e.target.closest('.btn-next'); if(nextBtn){ const id = nextBtn.closest('.order-card').dataset.id; const flow = ['Pendiente','En Proceso','Para Retirar']; const o=orders.find(x=>x.id===id); if(o){ const idx = flow.indexOf(o.status); if(idx<flow.length-1) changeStatus(id, flow[idx+1]); } return; }
+        const prevBtn = e.target.closest('.btn-prev'); if(prevBtn){ const id = prevBtn.closest('.order-card').dataset.id; const flow = ['Pendiente','En Proceso','Para Retirar']; const o=orders.find(x=>x.id===id); if(o){ const idx = flow.indexOf(o.status); if(idx>0) changeStatus(id, flow[idx-1]); } return; }
+        const delBtn = e.target.closest('.btn-delete'); if(delBtn){ const id = delBtn.closest('.order-card').dataset.id; if(confirm('Eliminar orden?')) deleteOrder(id); return; }
+      });
+
+      btnSimular.addEventListener('click', ()=> addOrder({ customerName:'Simulado', type:'Para llevar', items:[{title:'Combo',qty:1}], status:'Pendiente' }));
+      btnClear.addEventListener('click', ()=>{ if(confirm('Limpiar todas las órdenes?')){ orders=[]; render(); broadcast({action:'clear'}); } });
+
+      window.addEventListener('message', (event)=>{
+        const data = event.data || {};
+        if(data.type === 'new-order' && data.order) addOrder(data.order);
+        else if(data.type === 'batch-orders' && Array.isArray(data.orders)) data.orders.forEach(o=>addOrder(o));
+      }, false);
+
+      if(chan){
+        chan.onmessage = (ev)=>{
+          const data = ev.data || {};
+          if(data && data.action === 'request_all') {
+            chan.postMessage({ action:'all', orders });
+          } else if(data && data.action === 'set_status' && data.id && data.status) {
+            changeStatus(data.id, data.status);
+          }
+        };
+      }
+
+      window.comanda = { addOrder, list:()=>orders.slice() };
+      render();
+    })();
+  </script>
 </body>
-
 </html>

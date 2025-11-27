@@ -1,494 +1,120 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Menús Variados - ET Dev</title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <link rel="icon" type="image/x-icon" href="IMG/delivery-man.ico" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Inicio - Pedido Burger</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="icon" href="IMG/delivery-man.ico" />
+  <style>
+    :root{ --bk-brown:#6a2d17; --bk-bg:#fff8f0; --accent:#5a3a32; --card:#fff9f4; }
+    html,body{height:100%}
+    body{ background:var(--bk-bg); font-family:"Helvetica Neue",Arial,sans-serif; -webkit-font-smoothing:antialiased; margin:0; display:flex; align-items:center; justify-content:center; padding:24px; }
+    .wrap{ width:100%; max-width:820px; background:linear-gradient(180deg,#fff #fff); border-radius:14px; box-shadow:0 14px 40px rgba(0,0,0,0.06); padding:28px; display:grid; grid-template-columns:1fr 300px; gap:18px; align-items:start; }
+    .brand{ display:flex; gap:12px; align-items:center; margin-bottom:8px; }
+    .brand img{ width:48px;height:48px; } .brand h1{ font-size:1.4rem; margin:0; color:var(--accent); font-weight:800; }
+    .choices{ display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin:18px 0; }
+    .big-btn{ background:var(--card); border-radius:12px; padding:18px; text-align:center; border:2px solid transparent; cursor:pointer; transition:transform .12s, box-shadow .12s; user-select:none; box-shadow:0 6px 18px rgba(0,0,0,0.03); font-weight:800; color:var(--accent); }
+    .big-btn:hover{ transform:translateY(-6px); box-shadow:0 12px 30px rgba(0,0,0,0.06); }
+    .big-btn .emoji{ font-size:36px; display:block; margin-bottom:8px; color:var(--bk-brown); }
+    .small-muted{ color:#7a6b63; font-size:.95rem; margin-top:6px; }
+    .panel{ background:var(--card); padding:16px; border-radius:12px; }
+    .modal-overlay{ position:fixed; inset:0; background:rgba(0,0,0,0.45); display:flex; align-items:center; justify-content:center; z-index:1200; padding:16px; }
+    .modal-card{ background:white; border-radius:10px; width:100%; max-width:420px; padding:18px; box-shadow:0 10px 40px rgba(0,0,0,0.2); }
+    .modal-card h3{ margin:0 0 10px 0; color:var(--accent); }
+    .modal-actions{ display:flex; gap:10px; margin-top:12px; justify-content:flex-end; }
+    @media (max-width:900px){ .wrap{ grid-template-columns:1fr; padding:18px; } .choices{ grid-template-columns:1fr; } }
+  </style>
 </head>
-
 <body>
-  <header>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <a class="navbar-brand d-flex align-items-center" href="Comanda.html">
-        <img src="IMG/delivery-man.png" alt="Logo delivery" width="36" height="36" class="mr-2">
-        Pedido Burger
-      </a>
-    </nav>
-  </header>
-
-  <main>
-    <div id="carrito" class="container mt-4">
-      <h2>Carrito de Compras</h2>
-      <ul id="lista-carrito" class="list-group"></ul>
-      <p id="total" class="mt-3">Pedido: 0</p>
-      <button id="confirmar-pedido" class="btn btn-secondary">Confirmar Pedido</button>
-    </div>
-
-    <div class="container mt-5">
-      <div class="row">
-        <!-- Card 1 -->
-        <div class="col-lg-4 mb-4">
-          <div class="card" data-price="1500">
-            <img src="IMG/Productos/empanada_carne.jpg" class="card-img-top" alt="Combo King-Pollo" loading="lazy">
-            <div class="card-body">
-              <h5 class="card-title">Combo King-Pollo</h5>
-              <ul class="card-text list-unstyled">
-                <li>Hamburguesa de pollo</li>
-                <li>Papas regulares</li>
-                <li>Gaseosa Mediana</li>
-                <li><strong>$1500</strong></li>
-              </ul>
-              <div class="form-group input-small">
-                <label for="menu1Cantidad">Cantidad:</label>
-                <div class="input-group">
-                  <input type="number" class="form-control" id="menu1Cantidad" min="0" value="0" aria-label="Cantidad Combo King-Pollo">
-                  <div class="input-group-append">
-                    <button class="btn btn-primary btn-cart" type="button" aria-label="Agregar Combo King-Pollo al carrito">
-                      <i class="fas fa-shopping-cart"></i>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Card 2 -->
-        <div class="col-lg-4 mb-4">
-          <div class="card" data-price="800">
-            <img src="IMG/Productos/empanada_atun.jpg" class="card-img-top" alt="Papas King" loading="lazy">
-            <div class="card-body">
-              <h5 class="card-title">Papas King</h5>
-              <p class="card-text">Balde de 500gr de Papas</p>
-              <div class="form-group input-small">
-                <label for="menu2Cantidad">Cantidad:</label>
-                <div class="input-group">
-                  <input type="number" class="form-control" id="menu2Cantidad" min="0" value="0" aria-label="Cantidad Papas King">
-                  <div class="input-group-append">
-                    <button class="btn btn-primary btn-cart" type="button" aria-label="Agregar Papas King al carrito">
-                      <i class="fas fa-shopping-cart"></i>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Card 3 -->
-        <div class="col-lg-4 mb-4">
-          <div class="card" data-price="1200">
-            <img src="IMG/Productos/empanada_jamonyqueso.jpg" class="card-img-top" alt="Combo Mexican" loading="lazy">
-            <div class="card-body">
-              <h5 class="card-title">Combo Mexican</h5>
-              <ul class="card-text list-unstyled">
-                <li>3 tacos al pastor</li>
-                <li>Papas regulares</li>
-                <li>Gaseosa o refresco natural</li>
-              </ul>
-              <div class="form-group input-small">
-                <label for="menu3Cantidad">Cantidad:</label>
-                <div class="input-group">
-                  <input type="number" class="form-control" id="menu3Cantidad" min="0" value="0" aria-label="Cantidad Combo Mexican">
-                  <div class="input-group-append">
-                    <button class="btn btn-primary btn-cart" type="button" aria-label="Agregar Combo Mexican al carrito">
-                      <i class="fas fa-shopping-cart"></i>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
+  <main class="wrap" role="main" aria-labelledby="main-title">
+    <section>
+      <div class="brand">
+        <img src="IMG/delivery-man.png" alt="ET">
+        <h1 id="main-title">Pedido Burger — Inicio</h1>
       </div>
-    </div>
 
-    <!-- Resto de tarjetas (se actualizan IDs, prices y accesibilidad) -->
-    <div class="container mt-5">
-      <div class="row">
-        <div class="col-lg-4 mb-4">
-          <div class="card" data-price="600">
-            <img src="IMG/Productos/cerveza.jpg" class="card-img-top" alt="Menú 1 - Cerveza" loading="lazy">
-            <div class="card-body">
-              <h5 class="card-title">Menú 1</h5>
-              <p class="card-text">Descripción del menú 1.</p>
-              <div class="form-group input-small">
-                <label for="menu4Cantidad">Cantidad:</label>
-                <div class="input-group">
-                  <input type="number" class="form-control" id="menu4Cantidad" min="0" value="0" aria-label="Cantidad Menú 1">
-                  <div class="input-group-append">
-                    <button class="btn btn-primary btn-cart" type="button" aria-label="Agregar Menú 1 al carrito">
-                      <i class="fas fa-shopping-cart"></i>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+      <p class="small-muted">Elegí Comer aquí o Para llevar. Luego ingresá tu nombre. No hace falta número de pedido.</p>
 
-        <div class="col-lg-4 mb-4">
-          <div class="card" data-price="400">
-            <img src="IMG/Productos/gaseosa.jpg" class="card-img-top" alt="Menú 2 - Gaseosa" loading="lazy">
-            <div class="card-body">
-              <h5 class="card-title">Menú 2</h5>
-              <p class="card-text">Descripción del menú 2.</p>
-              <div class="form-group input-small">
-                <label for="menu5Cantidad">Cantidad:</label>
-                <div class="input-group">
-                  <input type="number" class="form-control" id="menu5Cantidad" min="0" value="0" aria-label="Cantidad Menú 2">
-                  <div class="input-group-append">
-                    <button class="btn btn-primary btn-cart" type="button" aria-label="Agregar Menú 2 al carrito">
-                      <i class="fas fa-shopping-cart"></i>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div class="choices" role="group" aria-label="Tipo de pedido">
+        <button id="btn-dine" class="big-btn" data-type="comer_aqui" aria-label="Comer aquí">
+          <span class="emoji">🍽️</span>
+          Comer aquí
+          <div class="small-muted">Mesa / consumo en local</div>
+        </button>
 
-        <div class="col-lg-4 mb-4">
-          <div class="card" data-price="350">
-            <img src="IMG/Productos/agua.jpg" class="card-img-top" alt="Menú 3 - Agua" loading="lazy">
-            <div class="card-body">
-              <h5 class="card-title">Menú 3</h5>
-              <p class="card-text">Descripción del menú 3.</p>
-              <div class="form-group input-small">
-                <label for="menu6Cantidad">Cantidad:</label>
-                <div class="input-group">
-                  <input type="number" class="form-control" id="menu6Cantidad" min="0" value="0" aria-label="Cantidad Menú 3">
-                  <div class="input-group-append">
-                    <button class="btn btn-primary btn-cart" type="button" aria-label="Agregar Menú 3 al carrito">
-                      <i class="fas fa-shopping-cart"></i>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
+        <button id="btn-take" class="big-btn" data-type="para_llevar" aria-label="Para llevar">
+          <span class="emoji">🥡</span>
+          Para llevar
+          <div class="small-muted">Recoger o delivery</div>
+        </button>
       </div>
-    </div>
 
-    <!-- Más grupos de tarjetas -->
-    <div class="container mt-5">
-      <div class="row">
-        <div class="col-lg-4 mb-4">
-          <div class="card" data-price="700">
-            <img src="IMG/Productos/napolitana.jpg" class="card-img-top" alt="Menú Napolitana" loading="lazy">
-            <div class="card-body">
-              <h5 class="card-title">Menú 1</h5>
-              <p class="card-text">Descripción del menú 1.</p>
-              <div class="form-group input-small">
-                <label for="menu7Cantidad">Cantidad:</label>
-                <div class="input-group">
-                  <input type="number" class="form-control" id="menu7Cantidad" min="0" value="0" aria-label="Cantidad Menú Napolitana">
-                  <div class="input-group-append">
-                    <button class="btn btn-primary btn-cart" type="button" aria-label="Agregar Menú Napolitana al carrito">
-                      <i class="fas fa-shopping-cart"></i>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-lg-4 mb-4">
-          <div class="card" data-price="750">
-            <img src="IMG/Productos/jamonymorron.jpg" class="card-img-top" alt="Menú Jamón y Morrón" loading="lazy">
-            <div class="card-body">
-              <h5 class="card-title">Menú 2</h5>
-              <p class="card-text">Descripción del menú 2.</p>
-              <div class="form-group input-small">
-                <label for="menu8Cantidad">Cantidad:</label>
-                <div class="input-group">
-                  <input type="number" class="form-control" id="menu8Cantidad" min="0" value="0" aria-label="Cantidad Menú Jamón y Morrón">
-                  <div class="input-group-append">
-                    <button class="btn btn-primary btn-cart" type="button" aria-label="Agregar Menú Jamón y Morrón al carrito">
-                      <i class="fas fa-shopping-cart"></i>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-lg-4 mb-4">
-          <div class="card" data-price="650">
-            <img src="IMG/Productos/muzzarella.jpg" class="card-img-top" alt="Menú Muzzarella" loading="lazy">
-            <div class="card-body">
-              <h5 class="card-title">Menú 3</h5>
-              <p class="card-text">Descripción del menú 3.</p>
-              <div class="form-group input-small">
-                <label for="menu9Cantidad">Cantidad:</label>
-                <div class="input-group">
-                  <input type="number" class="form-control" id="menu9Cantidad" min="0" value="0" aria-label="Cantidad Menú Muzzarella">
-                  <div class="input-group-append">
-                    <button class="btn btn-primary btn-cart" type="button" aria-label="Agregar Menú Muzzarella al carrito">
-                      <i class="fas fa-shopping-cart"></i>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
+      <div class="panel">
+        <div class="note">Al pulsar una opción se abrirá un cuadro para ingresar tu nombre. Los datos quedan sólo en la sesión y se pasan al tótem.</div>
       </div>
-    </div>
+    </section>
 
-    <!-- Últimos grupos -->
-    <div class="container mt-5">
-      <div class="row">
-        <div class="col-lg-4 mb-4">
-          <div class="card" data-price="900">
-            <img src="IMG/Productos/combo1.jpeg" class="card-img-top" alt="Combo 1" loading="lazy">
-            <div class="card-body">
-              <h5 class="card-title">Menú 1</h5>
-              <p class="card-text">Descripción del menú 1.</p>
-              <div class="form-group input-small">
-                <label for="menu10Cantidad">Cantidad:</label>
-                <div class="input-group">
-                  <input type="number" class="form-control" id="menu10Cantidad" min="0" value="0" aria-label="Cantidad Combo 1">
-                  <div class="input-group-append">
-                    <button class="btn btn-primary btn-cart" type="button" aria-label="Agregar Combo 1 al carrito">
-                      <i class="fas fa-shopping-cart"></i>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-lg-4 mb-4">
-          <div class="card" data-price="850">
-            <img src="IMG/Productos/combo2.jpeg" class="card-img-top" alt="Combo 2" loading="lazy">
-            <div class="card-body">
-              <h5 class="card-title">Menú 2</h5>
-              <p class="card-text">Descripción del menú 2.</p>
-              <div class="form-group input-small">
-                <label for="menu11Cantidad">Cantidad:</label>
-                <div class="input-group">
-                  <input type="number" class="form-control" id="menu11Cantidad" min="0" value="0" aria-label="Cantidad Combo 2">
-                  <div class="input-group-append">
-                    <button class="btn btn-primary btn-cart" type="button" aria-label="Agregar Combo 2 al carrito">
-                      <i class="fas fa-shopping-cart"></i>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-lg-4 mb-4">
-          <div class="card" data-price="880">
-            <img src="IMG/Productos/combo3.jpeg" class="card-img-top" alt="Combo 3" loading="lazy">
-            <div class="card-body">
-              <h5 class="card-title">Menú 3</h5>
-              <p class="card-text">Descripción del menú 3.</p>
-              <div class="form-group input-small">
-                <label for="menu12Cantidad">Cantidad:</label>
-                <div class="input-group">
-                  <input type="number" class="form-control" id="menu12Cantidad" min="0" value="0" aria-label="Cantidad Combo 3">
-                  <div class="input-group-append">
-                    <button class="btn btn-primary btn-cart" type="button" aria-label="Agregar Combo 3 al carrito">
-                      <i class="fas fa-shopping-cart"></i>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
+    <aside class="panel" aria-label="Accesos">
+      <h4 style="margin-top:0;color:var(--accent)">Accesos rápidos</h4>
+      <p class="small-muted">Ir al menú o ver estado del pedido.</p>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px;">
+        <a href="totem.html" class="btn btn-outline-secondary btn-sm">Ir al menú (sin meta)</a>
+        <a href="status.html" class="btn btn-outline-primary btn-sm" target="_blank">Ver estado del pedido</a>
       </div>
-    </div>
-
-    <!-- Postres -->
-    <div class="container mt-5">
-      <div class="row">
-        <div class="col-lg-4 mb-4">
-          <div class="card" data-price="300">
-            <img src="IMG/Productos/bombones.jpg" class="card-img-top" alt="Bombones" loading="lazy">
-            <div class="card-body">
-              <h5 class="card-title">Menú 1</h5>
-              <p class="card-text">Descripción del menú 1.</p>
-              <div class="form-group input-small">
-                <label for="menu13Cantidad">Cantidad:</label>
-                <div class="input-group">
-                  <input type="number" class="form-control" id="menu13Cantidad" min="0" value="0" aria-label="Cantidad Bombones">
-                  <div class="input-group-append">
-                    <button class="btn btn-primary btn-cart" type="button" aria-label="Agregar Bombones al carrito">
-                      <i class="fas fa-shopping-cart"></i>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-lg-4 mb-4">
-          <div class="card" data-price="450">
-            <img src="IMG/Productos/almendrado.jpg" class="card-img-top" alt="Almendrado" loading="lazy">
-            <div class="card-body">
-              <h5 class="card-title">Menú 2</h5>
-              <p class="card-text">Descripción del menú 2.</p>
-              <div class="form-group input-small">
-                <label for="menu14Cantidad">Cantidad:</label>
-                <div class="input-group">
-                  <input type="number" class="form-control" id="menu14Cantidad" min="0" value="0" aria-label="Cantidad Almendrado">
-                  <div class="input-group-append">
-                    <button class="btn btn-primary btn-cart" type="button" aria-label="Agregar Almendrado al carrito">
-                      <i class="fas fa-shopping-cart"></i>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-lg-4 mb-4">
-          <div class="card" data-price="500">
-            <img src="IMG/Productos/helado.jpg" class="card-img-top" alt="Helado" loading="lazy">
-            <div class="card-body">
-              <h5 class="card-title">Menú 3</h5>
-              <p class="card-text">Descripción del menú 3.</p>
-              <div class="form-group input-small">
-                <label for="menu15Cantidad">Cantidad:</label>
-                <div class="input-group">
-                  <input type="number" class="form-control" id="menu15Cantidad" min="0" value="0" aria-label="Cantidad Helado">
-                  <div class="input-group-append">
-                    <button class="btn btn-primary btn-cart" type="button" aria-label="Agregar Helado al carrito">
-                      <i class="fas fa-shopping-cart"></i>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- Script del carrito: robusto y accesible -->
-    <script>
-      const listaCarrito = document.getElementById('lista-carrito');
-      const totalCarrito = document.getElementById('total');
-      const confirmarPedidoButton = document.getElementById('confirmar-pedido');
-      let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
-
-      // Delegación de eventos para botones "Agregar"
-      document.addEventListener('click', (e) => {
-        const btn = e.target.closest('.btn-cart');
-        if (!btn) return;
-
-        const card = btn.closest('.card');
-        if (!card) return;
-
-        const titulo = card.querySelector('.card-title')?.textContent?.trim() || 'Producto';
-        const input = card.querySelector('input[type="number"]');
-        const cantidad = parseInt(input?.value || '0', 10);
-        const precio = parseFloat(card.dataset.price || '0');
-
-        if (!cantidad || cantidad <= 0) {
-          alert('Ingresa una cantidad mayor a 0 antes de agregar.');
-          return;
-        }
-
-        const producto = {
-          titulo,
-          cantidad,
-          precio,
-          subtotal: cantidad * precio
-        };
-
-        carrito.push(producto);
-        localStorage.setItem('carrito', JSON.stringify(carrito));
-        actualizarCarrito();
-
-        if (input) input.value = 0;
-      });
-
-      function actualizarCarrito() {
-        listaCarrito.innerHTML = '';
-        let totalItems = 0;
-        let totalPrice = 0;
-
-        carrito.forEach((producto, index) => {
-          const li = document.createElement('li');
-          li.className = 'list-group-item d-flex justify-content-between align-items-center';
-          li.innerHTML = `
-            <div>
-              <strong>${producto.titulo}</strong><br>
-              Cantidad: ${producto.cantidad}
-            </div>
-            <div>
-              ${producto.subtotal.toLocaleString('es-AR', { style: 'currency', currency: 'ARS' })}
-              <button class="btn btn-sm btn-outline-danger ml-2 remove-item" data-index="${index}" aria-label="Eliminar ${producto.titulo}">✕</button>
-            </div>
-          `;
-          listaCarrito.appendChild(li);
-
-          totalItems += Number(producto.cantidad) || 0;
-          totalPrice += Number(producto.subtotal) || 0;
-        });
-
-        totalCarrito.textContent = `Items: ${totalItems} — Total: ${totalPrice.toLocaleString('es-AR', { style: 'currency', currency: 'ARS' })}`;
-      }
-
-      // Eliminar item por delegación
-      listaCarrito.addEventListener('click', (e) => {
-        if (e.target.classList.contains('remove-item')) {
-          const idx = Number(e.target.dataset.index);
-          carrito.splice(idx, 1);
-          localStorage.setItem('carrito', JSON.stringify(carrito));
-          actualizarCarrito();
-        }
-      });
-
-      confirmarPedidoButton.addEventListener('click', () => {
-        if (carrito.length === 0) {
-          alert('El carrito está vacío. Agrega productos antes de confirmar el pedido.');
-          return;
-        }
-        localStorage.setItem('carrito', JSON.stringify(carrito));
-        window.location.href = 'Comanda.html';
-      });
-
-      document.addEventListener('DOMContentLoaded', actualizarCarrito);
-    </script>
-
+    </aside>
   </main>
 
-  <footer class="footer mt-auto py-3 bg-dark">
-    <div class="container text-center">
-      <span class="text-muted">
-        &copy; <a href="https://enzotorricella.github.io/" target="_blank" rel="noopener noreferrer">ET</a> -
-        <script>document.write(new Date().getFullYear())</script>
-      </span>
+  <!-- Modal para solo nombre -->
+  <div id="order-modal" class="modal-overlay" hidden aria-hidden="true" role="dialog" aria-labelledby="modal-title">
+    <div class="modal-card" role="document">
+      <h3 id="modal-title">Ingresá tu nombre</h3>
+      <form id="modal-form" novalidate>
+        <div class="mb-2">
+          <label for="modal-name" class="form-label">Nombre</label>
+          <input id="modal-name" class="form-control" type="text" maxlength="40" inputmode="text" autocomplete="name" required placeholder="Ej: Juan">
+        </div>
+        <div class="modal-actions">
+          <button type="button" id="modal-cancel" class="btn btn-outline-secondary">Cancelar</button>
+          <button type="submit" id="modal-submit" class="btn btn-primary">Continuar</button>
+        </div>
+      </form>
     </div>
-  </footer>
+  </div>
 
-  <!-- Scripts únicos al final -->
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script>
+    (function(){
+      const btnDine = document.getElementById('btn-dine');
+      const btnTake = document.getElementById('btn-take');
+      const modal = document.getElementById('order-modal');
+      const modalForm = document.getElementById('modal-form');
+      const modalName = document.getElementById('modal-name');
+      const modalCancel = document.getElementById('modal-cancel');
+      let selectedType = null;
+
+      function openModal(type){ selectedType = type; modal.hidden = false; modal.setAttribute('aria-hidden','false'); modalForm.reset(); modalName.focus(); }
+      function closeModal(){ selectedType = null; modal.hidden = true; modal.setAttribute('aria-hidden','true'); }
+
+      [btnDine, btnTake].forEach(btn=>{
+        btn.addEventListener('click', ()=> openModal(btn.dataset.type));
+      });
+      modalCancel.addEventListener('click', closeModal);
+
+      modalForm.addEventListener('submit', (e)=>{
+        e.preventDefault();
+        const name = modalName.value.trim();
+        if(!name){ alert('Ingresá un nombre.'); modalName.focus(); return; }
+        const meta = { type: selectedType, name };
+        try{ sessionStorage.setItem('order_meta', JSON.stringify(meta)); }catch(err){}
+        window.location.href = 'totem.html';
+      });
+
+      document.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && !modal.hidden) closeModal(); });
+      modal.addEventListener('click', (e)=>{ if(e.target === modal) closeModal(); });
+
+      // foco inicial
+      btnDine.focus();
+    })();
+  </script>
 </body>
-
 </html>
