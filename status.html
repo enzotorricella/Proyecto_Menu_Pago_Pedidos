@@ -41,17 +41,23 @@
       const chan = ('BroadcastChannel' in window) ? new BroadcastChannel('orders') : null;
       let orders = [];
 
+      function escapeHtml(value) {
+        return String(value ?? '').replace(/[&<>"']/g, char => ({
+          '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+        })[char]);
+      }
+
       function render(){
         const name = (filterInput.value||'').trim().toLowerCase();
         listProcessing.innerHTML = ''; listReady.innerHTML = '';
         orders.filter(o => o.status === 'En Proceso').filter(o=> !name || o.customerName.toLowerCase().includes(name)).forEach(o=>{
           const div = document.createElement('div'); div.className='card';
-          div.innerHTML = `<strong>${o.customerName}</strong><div class="muted">${(o.type||'')} · ${o.items.map(i=>i.title+' ×'+i.qty).join(', ')}</div>`;
+          div.innerHTML = `<strong>${escapeHtml(o.customerName)}</strong><div class="muted">${escapeHtml(o.type||'')} · ${(o.items || []).map(i=>escapeHtml(i.title)+' ×'+escapeHtml(i.qty)).join(', ')}</div>`;
           listProcessing.appendChild(div);
         });
         orders.filter(o => o.status === 'Para Retirar').filter(o=> !name || o.customerName.toLowerCase().includes(name)).forEach(o=>{
           const div = document.createElement('div'); div.className='card';
-          div.innerHTML = `<strong>${o.customerName}</strong><div class="muted">${(o.type||'')} · ${o.items.map(i=>i.title+' ×'+i.qty).join(', ')}</div>`;
+          div.innerHTML = `<strong>${escapeHtml(o.customerName)}</strong><div class="muted">${escapeHtml(o.type||'')} · ${(o.items || []).map(i=>escapeHtml(i.title)+' ×'+escapeHtml(i.qty)).join(', ')}</div>`;
           listReady.appendChild(div);
         });
       }

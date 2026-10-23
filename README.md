@@ -1,45 +1,45 @@
-# Menú Interactivo de Pedidos para Cadena de Comida Rápida
+# Pedido Burger — Demo de pedidos y comanda
 
-Este proyecto es una aplicación web que simula el proceso de realizar pedidos en una cadena de comida rápida. Desarrollado con **HTML**, **CSS**, **Bootstrap**, **JavaScript** y **LocalStorage**, ofrece una experiencia completa de gestión de pedidos. Además de la interfaz de usuario para la selección de productos, incorpora una pantalla de seguimiento de pedidos estilo **Kanban**, donde los pedidos avanzan a través de distintas etapas, permitiendo una visualización y confirmación desde la cocina en tiempo real.
+Prototipo frontend de pedidos para un local gastronómico. Construido con **HTML, CSS, Bootstrap y JavaScript**, sin backend ni servidor de datos.
 
-## Funcionalidades Principales
+> **Alcance:** demostración local y educativa. No es un POS, sistema de facturación ni plataforma apta para recibir pedidos de clientes en producción.
 
-- **Selección de Productos:** Los usuarios pueden navegar por el menú, organizado en categorías como hamburguesas, bebidas, postres, etc., y seleccionar los productos para añadirlos a su pedido.
-- **Gestión del Pedido en Tiempo Real:** El resumen del pedido se actualiza instantáneamente, mostrando los productos seleccionados, sus precios y el total.
-- **Almacenamiento en LocalStorage:** Los datos del pedido se almacenan temporalmente en **LocalStorage**, lo que permite a los usuarios mantener su selección incluso si recargan la página o salen temporalmente de la aplicación.
-- **Seguimiento de Pedidos Estilo Kanban:** Una pantalla especial de "Gestión de Pedidos" permite visualizar el progreso de los pedidos desde que se generan hasta que son entregados. Los pedidos avanzan a través de diferentes columnas de estado (por ejemplo: "En Proceso", "Preparando", "Listo para Entrega"), actualizándose en tiempo real.
-- **Interacción desde la Cocina:** El personal de cocina puede acceder a esta pantalla para confirmar la preparación de los pedidos. Al marcar un pedido como completado, se actualiza automáticamente tanto en la vista de pedidos del cliente como en la vista de la cocina.
-- **Reloj de Progreso:** Cada pedido incluye un reloj que indica el tiempo transcurrido desde que fue generado, ayudando al personal a priorizar los pedidos y mantener un flujo eficiente de trabajo.
-- **Diseño Responsive:** La interfaz está optimizada para funcionar tanto en dispositivos móviles como de escritorio, ofreciendo una experiencia fluida y adaptable a diferentes pantallas.
+## Pantallas
 
-## Estructura de Pantallas
+| Archivo | Función |
+| --- | --- |
+| `index.html` | Inicio: tipo de pedido y nombre del cliente |
+| `totem.html` | Menú, carrito y confirmación de pedidos |
+| `Comanda.html` | Vista de cocina con estados y acciones |
+| `status.html` | Consulta del estado de pedidos por nombre |
 
-1. **Pantalla de Inicio:** Muestra un menú con categorías principales (hamburguesas, bebidas, acompañamientos) y acceso rápido a la selección de productos.
+## Cómo ejecutarlo
 
-2. **Menú de Productos:** Lista de productos dentro de cada categoría, con imágenes, descripciones y precios. Los usuarios pueden seleccionar productos y ver más detalles antes de añadirlos al pedido.
+Se recomienda servir los archivos desde un servidor HTTP local y abrir todas las pantallas **en el mismo navegador y origen**.
 
-3. **Resumen del Pedido:** Un panel lateral o modal muestra el pedido en tiempo real, con la opción de ajustar las cantidades o eliminar productos. El total del pedido se actualiza automáticamente.
+Ejemplo con Python 3:
 
-4. **Pantalla de Gestión de Pedidos (Kanban):** Esta pantalla muestra todos los pedidos realizados en formato de tarjetas, organizadas en diferentes columnas que representan las etapas del pedido:
-   - **Pendiente:** Pedido recibido, pero no procesado.
-   - **En Proceso:** Pedido está siendo preparado.
-   - **Listo para Entregar:** Pedido preparado, listo para ser entregado al cliente.
-   
-   Los pedidos se mueven entre las columnas en función de la interacción desde la cocina.
-![menu digital](https://github.com/user-attachments/assets/c80a7c9f-b4b5-46f4-96ca-ae89df31d02c)
+```bash
+python -m http.server 8000
+```
 
-5. **Pantalla de Cocina:** El personal de cocina accede a esta pantalla para visualizar los pedidos en progreso y actualizar el estado de cada uno. Los cambios se reflejan en la vista de pedidos del cliente y el reloj se detiene al completar un pedido.
+Abrir `http://localhost:8000/index.html`. Para observar los mensajes abrir además `Comanda.html` y `status.html` en pestañas del mismo navegador.
 
-## Tecnologías Utilizadas
+## Funcionamiento y límites
 
-- **HTML:** Estructura del contenido y organización del sitio.
-- **CSS:** Estilos personalizados y diseño responsivo.
-- **Bootstrap:** Para el diseño responsive y componentes como botones, tarjetas y paneles.
-- **JavaScript:** Para manejar la interactividad del sitio, la actualización de los pedidos en tiempo real, y la gestión del estado de los pedidos.
-- **LocalStorage:** Almacenamiento temporal de los datos de los pedidos en el navegador, sin necesidad de una base de datos externa.
-- **Kanban (Gestión de Pedidos):** Implementado con **JavaScript**, permite mover los pedidos entre columnas y gestionar su progreso de manera visual.
+- La interfaz guarda cierta información temporal en `sessionStorage` y puede utilizar `localStorage` según la pantalla.
+- Las pantallas usan `BroadcastChannel` y `postMessage` para intercambiar eventos. **BroadcastChannel funciona entre contextos compatibles del mismo origen y entorno de almacenamiento, no es sincronización de red entre equipos.**
+- La comanda conserva pedidos en memoria mientras la pestaña está abierta. Recargarla puede perder el estado.
+- No hay backend, autenticación, autorización, stock, facturación, pagos reales ni base de datos compartida.
+- Los datos y precios del menú son demostrativos.
+- La carga de nombres y productos en vistas de comanda se escapa como texto HTML para mitigar la inyección de marcado desde los campos dinámicos.
 
-![menu de pedidos  en preparacion](https://github.com/user-attachments/assets/da1d46b4-0c15-4ec7-8dda-92302575daeb)
+## Requisitos para llevarlo a producción
 
+Serían necesarios, al menos, una API/backend, persistencia de pedidos, identificación de órdenes, sesiones, roles de cocina/caja, validación del servidor, sincronización real entre clientes, controles de seguridad, pruebas y observabilidad.
 
+## Qué demuestra
 
+Flujos de interfaz de pedidos, carrito, gestión de estados tipo Kanban, comunicación entre pestañas y trabajo con DOM sin framework. Este proyecto es un **ejemplo frontend** distinto de mis desarrollos comerciales en .NET.
+
+**Autor:** Enzo Torricella · [Portfolio](https://etorri.com.ar/) · [GitHub](https://github.com/enzotorricella)

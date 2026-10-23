@@ -54,6 +54,12 @@
 
       function generateId(){ return 'O-'+Date.now().toString(36).toUpperCase().slice(-6); }
 
+      function escapeHtml(value) {
+        return String(value ?? '').replace(/[&<>"']/g, char => ({
+          '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+        })[char]);
+      }
+
       function createOrderCard(order){
         const card = document.createElement('div');
         card.className = 'order-card p-2 shadow-sm bg-white';
@@ -62,11 +68,11 @@
         card.innerHTML = `
           <div class="d-flex justify-content-between align-items-start">
             <div>
-              <strong>${order.customerName}</strong> <div class="order-meta"><small class="text-muted">${order.type || ''}</small></div>
+              <strong>${escapeHtml(order.customerName)}</strong> <div class="order-meta"><small class="text-muted">${escapeHtml(order.type || '')}</small></div>
               <div class="order-meta mt-2">${itemsHtml}</div>
             </div>
             <div class="text-right">
-              <div class="small text-muted" data-timer-id="${order.id}">00:00</div>
+              <div class="small text-muted" data-timer-id="${escapeHtml(order.id)}">00:00</div>
               <div class="mt-2 btn-group btn-group-sm" role="group" aria-label="acciones">
                 <button class="btn btn-outline-primary btn-prev" title="Anterior">◀</button>
                 <button class="btn btn-primary btn-next" title="Siguiente">▶</button>
@@ -138,6 +144,7 @@
       btnClear.addEventListener('click', ()=>{ if(confirm('Limpiar todas las órdenes?')){ orders=[]; render(); broadcast({action:'clear'}); } });
 
       window.addEventListener('message', (event)=>{
+        if (event.origin !== window.location.origin) return;
         const data = event.data || {};
         if(data.type === 'new-order' && data.order) addOrder(data.order);
         else if(data.type === 'batch-orders' && Array.isArray(data.orders)) data.orders.forEach(o=>addOrder(o));
